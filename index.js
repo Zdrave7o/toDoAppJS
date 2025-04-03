@@ -2,11 +2,17 @@ const taskArray = localStorage.getItem("task") ? JSON.parse(localStorage.getItem
 []
 
 const addTaskBtn = document.querySelector("#enterTask");
+const task = document.querySelector("#taskInput");
 
 addTaskBtn.addEventListener("click", () => {
-    const task = document.querySelector("#taskInput");
     createTask(task);
-})
+});
+
+task.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+        createTask(taskInput);
+    }
+});
 
 function displayTasks(){
     let tasks = "";
@@ -14,7 +20,7 @@ function displayTasks(){
     for(let i = 0; i < taskArray.length; i++){
         tasks += `<div class="task">
                         <div class="input-controller">
-                            <textarea disabled>${taskArray[i]}</textarea>
+                            <textarea id="taskName" disabled>${taskArray[i]}</textarea>
                             <div class="update-control">
                                 <button id="save">Save</button>
                                 <button id="cancel">Cancel</button>
@@ -25,12 +31,13 @@ function displayTasks(){
                             <button id="delete"><i class="fa-solid fa-trash"></i></button>
                             <button id="done"><i class="fa-solid fa-check"></i></button>
                         </div>
-                    </div> `
+                    </div> `;
     }
 
     document.querySelector(".content").innerHTML = tasks;
     console.log(taskArray);
     activateDeleteListeners();
+    activateMarkAsDoneListeners();
     activateEditListeners();
     activateSaveListeners();
     activateCancelListeners();
@@ -43,6 +50,56 @@ function activateDeleteListeners(){
     })
 }
 
+function activateMarkAsDoneListeners(){
+    let doneBtn = document.querySelectorAll("#done");
+    doneBtn.forEach((db, i) => {
+        db.addEventListener("click", () => {markAsDone(i) })
+    })
+}
+
+let doneTasks = "";
+function markAsDone(i){
+    let tasks = "";
+
+    doneTasks +=`<div class="task">
+                        <div class="input-controller">
+                            <textarea style="text-decoration: line-through;" disabled>${taskArray[i]}</textarea>
+                            <div class="update-control">
+                                <button id="save">Save</button>
+                                <button id="cancel">Cancel</button>
+                            </div>
+                        </div>
+                    </div> `;
+
+    taskArray.splice(i, 1);
+
+    for(let a = 0; a < taskArray.length; a++){
+        tasks += `<div class="task">
+                        <div class="input-controller">
+                            <textarea disabled>${taskArray[a]}</textarea>
+                            <div class="update-control">
+                                <button id="save">Save</button>
+                                <button id="cancel">Cancel</button>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <button id="edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button id="delete"><i class="fa-solid fa-trash"></i></button>
+                            <button id="done"><i class="fa-solid fa-check"></i></button>
+                        </div>
+                    </div> `;
+    }
+
+    document.querySelector(".content").innerHTML = doneTasks + tasks;
+    localStorage.setItem("task", JSON.stringify(taskArray));
+    
+    activateDeleteListeners();
+    activateMarkAsDoneListeners();
+    activateEditListeners();
+    activateSaveListeners();
+    activateCancelListeners();
+}
+
 function deleteTask(i){
     taskArray.splice(i, 1);
     localStorage.setItem("task", JSON.stringify(taskArray));
@@ -50,10 +107,17 @@ function deleteTask(i){
 }
 
 function createTask(task){
-    taskArray.push(task.value);
-    localStorage.setItem("task", JSON.stringify(taskArray));
-    location.reload();
+    let inputValue = task.value.trim();
+    if(inputValue === ""){
+        window.alert("You CANNOT input an EMPTY TASK!")
+    } else{
+        taskArray.push(task.value);
+        localStorage.setItem("task", JSON.stringify(taskArray));
+        location.reload();
+    }
 }
+
+
  
 function displayDate(){
     let date = new Date();
