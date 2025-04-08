@@ -178,3 +178,7 @@ body{
     width:fit-content;
     height:auto;
 }
+
+.update-control{
+    display:none;
+}

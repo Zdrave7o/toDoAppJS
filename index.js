@@ -36,11 +36,7 @@ function displayTasks(){
 
     document.querySelector(".content").innerHTML = tasks;
     console.log(taskArray);
-    activateDeleteListeners();
-    activateMarkAsDoneListeners();
-    activateEditListeners();
-    activateSaveListeners();
-    activateCancelListeners();
+    activateAllListeners();
 }
 
 function activateDeleteListeners(){
@@ -57,19 +53,50 @@ function activateMarkAsDoneListeners(){
     })
 }
 
-let doneTasks = "";
+function activateEditListeners(){
+    let editBtn = document.querySelectorAll("#edit");
+    let updateControls = document.querySelectorAll(".update-control");
+    let taskText = document.querySelectorAll(".input-controller textarea");
+    editBtn.forEach((eb, i) => {
+        eb.addEventListener("click", () =>{ 
+
+            updateControls[i].style.display = "flex";
+            taskText[i].disabled = false;
+        })
+    })
+}
+
+function activateSaveListeners(){
+    let saveBtn = document.querySelectorAll("#save");
+    let taskText = document.querySelectorAll(".input-controller textarea");
+    saveBtn.forEach((sb, i) => {
+        sb.addEventListener("click", () =>{updateTask(taskText[i].value, i)})
+    })
+}
+
+function updateTask(text, i){
+    taskArray[i] = text;
+    localStorage.setItem("task", JSON.stringify(taskArray))
+    location.reload;
+}
+const doneTasksArray = [];
 function markAsDone(i){
     let tasks = "";
+    doneTasksArray.push(taskArray[i]);
 
-    doneTasks +=`<div class="task">
+    let doneTasks = "";
+
+    for(let b = 0; b < doneTasksArray.length; b++){
+        doneTasks +=`<div class="task">
                         <div class="input-controller">
-                            <textarea style="text-decoration: line-through;" disabled>${taskArray[i]}</textarea>
+                            <textarea style="text-decoration: line-through;" disabled>${doneTasksArray[b]}</textarea>
                             <div class="update-control">
                                 <button id="save">Save</button>
                                 <button id="cancel">Cancel</button>
                             </div>
                         </div>
                     </div> `;
+    }
 
     taskArray.splice(i, 1);
 
@@ -93,17 +120,49 @@ function markAsDone(i){
     document.querySelector(".content").innerHTML = doneTasks + tasks;
     localStorage.setItem("task", JSON.stringify(taskArray));
     
-    activateDeleteListeners();
-    activateMarkAsDoneListeners();
-    activateEditListeners();
-    activateSaveListeners();
-    activateCancelListeners();
+    activateAllListeners();
 }
 
 function deleteTask(i){
     taskArray.splice(i, 1);
     localStorage.setItem("task", JSON.stringify(taskArray));
-    location.reload();
+
+    let tasks = "";
+    let doneTasks = "";
+    document.querySelector(".content").innerHTML = "";
+
+    for(let b = 0; b < doneTasksArray.length; b++){
+            doneTasks +=`<div class="task">
+                            <div class="input-controller">
+                                <textarea style="text-decoration: line-through;" disabled>${doneTasksArray[b]}</textarea>
+                                <div class="update-control">
+                                    <button id="save">Save</button>
+                                    <button id="cancel">Cancel</button>
+                                </div>
+                            </div>
+                        </div> `;
+    }
+
+    for(let a = 0; a < taskArray.length; a++){
+        tasks += `<div class="task">
+                        <div class="input-controller">
+                            <textarea disabled>${taskArray[a]}</textarea>
+                            <div class="update-control">
+                                <button id="save">Save</button>
+                                <button id="cancel">Cancel</button>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <button id="edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button id="delete"><i class="fa-solid fa-trash"></i></button>
+                            <button id="done"><i class="fa-solid fa-check"></i></button>
+                        </div>
+                    </div> `;
+    }
+
+    document.querySelector(".content").innerHTML = doneTasks + tasks;
+
+    activateAllListeners();
 }
 
 function createTask(task){
@@ -116,8 +175,6 @@ function createTask(task){
         location.reload();
     }
 }
-
-
  
 function displayDate(){
     let date = new Date();
@@ -173,3 +230,12 @@ window.onload = function(){
     displayDate();
     displayTasks();
 }
+
+function activateAllListeners(){
+    activateDeleteListeners();
+    activateMarkAsDoneListeners();
+    activateEditListeners();
+    activateSaveListeners();
+    activateCancelListeners();
+}
+
