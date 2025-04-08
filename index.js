@@ -21,15 +21,14 @@ function displayTasks(){
         tasks += `<div class="task">
                         <div class="input-controller">
                             <textarea id="taskName" disabled>${taskArray[i]}</textarea>
-                            <div class="update-control">
+                        </div>
+                        <div class="update-control">
                                 <button id="save">Save</button>
                                 <button id="cancel">Cancel</button>
-                            </div>
                         </div>
                         <div class="buttons">
                             <button id="edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button id="delete"><i class="fa-solid fa-trash"></i></button>
-                            <button id="done"><i class="fa-solid fa-check"></i></button>
+                            <button id="delete"><i class="fa-solid fa-check"></i></button>
                         </div>
                     </div> `;
     }
@@ -43,13 +42,6 @@ function activateDeleteListeners(){
     let deleteBtn = document.querySelectorAll("#delete");
     deleteBtn.forEach((db, i) => {
         db.addEventListener("click", () =>{ deleteTask(i) })
-    })
-}
-
-function activateMarkAsDoneListeners(){
-    let doneBtn = document.querySelectorAll("#done");
-    doneBtn.forEach((db, i) => {
-        db.addEventListener("click", () => {markAsDone(i) })
     })
 }
 
@@ -74,95 +66,29 @@ function activateSaveListeners(){
     })
 }
 
+function activateCancelListeners(){
+    let cancelBtn = document.querySelectorAll("#cancel");
+    let updateControls = document.querySelectorAll(".update-control");
+    let taskText = document.querySelectorAll(".input-controller textarea");
+    cancelBtn.forEach((cb, i) =>{
+        cb.addEventListener("click", () => {
+            updateControls[i].style.display = "none";
+            taskText[i].disabled = true;
+            taskText[i].value = taskArray[i];
+        })
+    })
+}
+
 function updateTask(text, i){
     taskArray[i] = text;
     localStorage.setItem("task", JSON.stringify(taskArray))
-    location.reload;
-}
-const doneTasksArray = [];
-function markAsDone(i){
-    let tasks = "";
-    doneTasksArray.push(taskArray[i]);
-
-    let doneTasks = "";
-
-    for(let b = 0; b < doneTasksArray.length; b++){
-        doneTasks +=`<div class="task">
-                        <div class="input-controller">
-                            <textarea style="text-decoration: line-through;" disabled>${doneTasksArray[b]}</textarea>
-                            <div class="update-control">
-                                <button id="save">Save</button>
-                                <button id="cancel">Cancel</button>
-                            </div>
-                        </div>
-                    </div> `;
-    }
-
-    taskArray.splice(i, 1);
-
-    for(let a = 0; a < taskArray.length; a++){
-        tasks += `<div class="task">
-                        <div class="input-controller">
-                            <textarea disabled>${taskArray[a]}</textarea>
-                            <div class="update-control">
-                                <button id="save">Save</button>
-                                <button id="cancel">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="buttons">
-                            <button id="edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button id="delete"><i class="fa-solid fa-trash"></i></button>
-                            <button id="done"><i class="fa-solid fa-check"></i></button>
-                        </div>
-                    </div> `;
-    }
-
-    document.querySelector(".content").innerHTML = doneTasks + tasks;
-    localStorage.setItem("task", JSON.stringify(taskArray));
-    
-    activateAllListeners();
+    location.reload();
 }
 
 function deleteTask(i){
     taskArray.splice(i, 1);
     localStorage.setItem("task", JSON.stringify(taskArray));
-
-    let tasks = "";
-    let doneTasks = "";
-    document.querySelector(".content").innerHTML = "";
-
-    for(let b = 0; b < doneTasksArray.length; b++){
-            doneTasks +=`<div class="task">
-                            <div class="input-controller">
-                                <textarea style="text-decoration: line-through;" disabled>${doneTasksArray[b]}</textarea>
-                                <div class="update-control">
-                                    <button id="save">Save</button>
-                                    <button id="cancel">Cancel</button>
-                                </div>
-                            </div>
-                        </div> `;
-    }
-
-    for(let a = 0; a < taskArray.length; a++){
-        tasks += `<div class="task">
-                        <div class="input-controller">
-                            <textarea disabled>${taskArray[a]}</textarea>
-                            <div class="update-control">
-                                <button id="save">Save</button>
-                                <button id="cancel">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="buttons">
-                            <button id="edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button id="delete"><i class="fa-solid fa-trash"></i></button>
-                            <button id="done"><i class="fa-solid fa-check"></i></button>
-                        </div>
-                    </div> `;
-    }
-
-    document.querySelector(".content").innerHTML = doneTasks + tasks;
-
-    activateAllListeners();
+    location.reload();
 }
 
 function createTask(task){
@@ -233,7 +159,6 @@ window.onload = function(){
 
 function activateAllListeners(){
     activateDeleteListeners();
-    activateMarkAsDoneListeners();
     activateEditListeners();
     activateSaveListeners();
     activateCancelListeners();
