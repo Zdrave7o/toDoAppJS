@@ -21,26 +21,21 @@ function displayTasks(){
         tasks += `<div class="task">
                         <div class="input-controller">
                             <textarea id="taskName" disabled>${taskArray[i]}</textarea>
-                            <div class="update-control">
+                        </div>
+                        <div class="update-control">
                                 <button id="save">Save</button>
                                 <button id="cancel">Cancel</button>
-                            </div>
                         </div>
                         <div class="buttons">
                             <button id="edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button id="delete"><i class="fa-solid fa-trash"></i></button>
-                            <button id="done"><i class="fa-solid fa-check"></i></button>
+                            <button id="delete"><i class="fa-solid fa-check"></i></button>
                         </div>
                     </div> `;
     }
 
     document.querySelector(".content").innerHTML = tasks;
     console.log(taskArray);
-    activateDeleteListeners();
-    activateMarkAsDoneListeners();
-    activateEditListeners();
-    activateSaveListeners();
-    activateCancelListeners();
+    activateAllListeners();
 }
 
 function activateDeleteListeners(){
@@ -50,54 +45,44 @@ function activateDeleteListeners(){
     })
 }
 
-function activateMarkAsDoneListeners(){
-    let doneBtn = document.querySelectorAll("#done");
-    doneBtn.forEach((db, i) => {
-        db.addEventListener("click", () => {markAsDone(i) })
+function activateEditListeners(){
+    let editBtn = document.querySelectorAll("#edit");
+    let updateControls = document.querySelectorAll(".update-control");
+    let taskText = document.querySelectorAll(".input-controller textarea");
+    editBtn.forEach((eb, i) => {
+        eb.addEventListener("click", () =>{ 
+
+            updateControls[i].style.display = "flex";
+            taskText[i].disabled = false;
+        })
     })
 }
 
-let doneTasks = "";
-function markAsDone(i){
-    let tasks = "";
+function activateSaveListeners(){
+    let saveBtn = document.querySelectorAll("#save");
+    let taskText = document.querySelectorAll(".input-controller textarea");
+    saveBtn.forEach((sb, i) => {
+        sb.addEventListener("click", () =>{updateTask(taskText[i].value, i)})
+    })
+}
 
-    doneTasks +=`<div class="task">
-                        <div class="input-controller">
-                            <textarea style="text-decoration: line-through;" disabled>${taskArray[i]}</textarea>
-                            <div class="update-control">
-                                <button id="save">Save</button>
-                                <button id="cancel">Cancel</button>
-                            </div>
-                        </div>
-                    </div> `;
+function activateCancelListeners(){
+    let cancelBtn = document.querySelectorAll("#cancel");
+    let updateControls = document.querySelectorAll(".update-control");
+    let taskText = document.querySelectorAll(".input-controller textarea");
+    cancelBtn.forEach((cb, i) =>{
+        cb.addEventListener("click", () => {
+            updateControls[i].style.display = "none";
+            taskText[i].disabled = true;
+            taskText[i].value = taskArray[i];
+        })
+    })
+}
 
-    taskArray.splice(i, 1);
-
-    for(let a = 0; a < taskArray.length; a++){
-        tasks += `<div class="task">
-                        <div class="input-controller">
-                            <textarea disabled>${taskArray[a]}</textarea>
-                            <div class="update-control">
-                                <button id="save">Save</button>
-                                <button id="cancel">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="buttons">
-                            <button id="edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button id="delete"><i class="fa-solid fa-trash"></i></button>
-                            <button id="done"><i class="fa-solid fa-check"></i></button>
-                        </div>
-                    </div> `;
-    }
-
-    document.querySelector(".content").innerHTML = doneTasks + tasks;
-    localStorage.setItem("task", JSON.stringify(taskArray));
-    
-    activateDeleteListeners();
-    activateMarkAsDoneListeners();
-    activateEditListeners();
-    activateSaveListeners();
-    activateCancelListeners();
+function updateTask(text, i){
+    taskArray[i] = text;
+    localStorage.setItem("task", JSON.stringify(taskArray))
+    location.reload();
 }
 
 function deleteTask(i){
@@ -116,8 +101,6 @@ function createTask(task){
         location.reload();
     }
 }
-
-
  
 function displayDate(){
     let date = new Date();
@@ -173,5 +156,3 @@ window.onload = function(){
     displayDate();
     displayTasks();
 }
-
-//done
