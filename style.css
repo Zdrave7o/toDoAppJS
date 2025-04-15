@@ -165,4 +165,35 @@ body{
     min-width: 70%;
     overflow: scroll;
     height:auto;
+    resize: none;
+    scrollbar-width: none; /* for Firefox */
+    -ms-overflow-style: none; /* for IE and Edge */
+}
+
+.input-controller textarea::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari and Opera */
+  }
+
+.update-control{
+    display:none;
+    margin-left: 10px;
+}
+
+
+#save, #cancel{
+    width:70px;
+    height:30px;
+    margin:5px;
+    background-color: white;
+    border:none;
+    border-bottom: 2px solid hsl(0, 0%, 81%);
+    border-radius: 10px;
+    font-weight: bolder;
+    transition: .2s;
+}
+#save:hover{
+    transform: scale(1.1);
+}
+#cancel:hover{
+    transform: scale(1.1);
 }
