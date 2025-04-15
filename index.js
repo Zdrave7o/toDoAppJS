@@ -156,3 +156,11 @@ window.onload = function(){
     displayDate();
     displayTasks();
 }
+
+function activateAllListeners(){
+    activateDeleteListeners();
+    activateEditListeners();
+    activateSaveListeners();
+    activateCancelListeners();
+}
+
